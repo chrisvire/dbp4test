@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface DBP4Service {
     @GET("bibles")
-    Call<List<Bible>> getBibles(@QueryMap HashMap<String, String> options);
+    Call<Bibles> getBibles(@QueryMap HashMap<String, String> options);
 }

@@ -4,18 +4,20 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.fcbh.Bible;
+import org.fcbh.Bibles;
 import org.fcbh.DBP4Service;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-public class Controller implements Callback<List<Bible>> {
+public class Controller implements Callback<Bibles> {
     static final String BASE_URL="https://api.v4.dbt.io";
 
     String apiKey;
@@ -26,12 +28,13 @@ public class Controller implements Callback<List<Bible>> {
     public void start() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(getClient(getApiKey()))
                 .build();
 
         DBP4Service dbp4Service = retrofit.create(DBP4Service.class);
 
-        Call<List<Bible>> call = dbp4Service.getBibles(new HashMap<String, String>() {{
+        Call<Bibles> call = dbp4Service.getBibles(new HashMap<String, String>() {{
             put("media", "text_plain");
         }});
         call.enqueue(this);
@@ -56,17 +59,17 @@ public class Controller implements Callback<List<Bible>> {
     }
 
     @Override
-    public void onResponse(Call<List<Bible>> call, Response<List<Bible>> response) {
+    public void onResponse(Call<Bibles> call, Response<Bibles> response) {
         if (response.isSuccessful()) {
-            List<Bible> bibles = response.body();
-            bibles.forEach(bible -> System.out.println(bible.getAbbr()));
+            Bibles bibles = response.body();
+            bibles.getData().forEach(bible -> System.out.println(bible.getAbbr()));
         } else {
             System.out.println(response.errorBody());
         }
     }
 
     @Override
-    public void onFailure(Call<List<Bible>> call, Throwable throwable) {
+    public void onFailure(Call<Bibles> call, Throwable throwable) {
         throwable.printStackTrace();
     }
 }
