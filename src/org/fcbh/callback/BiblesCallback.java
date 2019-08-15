@@ -1,10 +1,9 @@
-package org.sil;
+package org.fcbh.callback;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import org.fcbh.Bible;
-import org.fcbh.Bibles;
+import org.fcbh.model.Bibles;
 import org.fcbh.DBP4Service;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,9 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 
-public class Controller implements Callback<Bibles> {
+public class BiblesCallback implements Callback<Bibles> {
     static final String BASE_URL="https://api.v4.dbt.io";
 
     String apiKey;

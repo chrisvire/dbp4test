@@ -1,4 +1,4 @@
-package org.fcbh;
+package org.fcbh.model;
 
 public class Bible {
     String abbr;
