@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 public class Main {
@@ -17,6 +18,12 @@ public class Main {
 
         //getBibles(dbp4);
         getFilesets(dbp4);
+//
+//        try {
+//            System.in.read();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
     }
 
     private static void getFilesets(DBP4 dbp4) {
@@ -25,7 +32,7 @@ public class Main {
             public void onResponse(Call<Filesets> call, Response<Filesets> response) {
                 if (response.isSuccessful()) {
                     Filesets filesets = response.body();
-                    filesets.getData().forEach(fileset -> System.out.printf("%s %s: %s\n", fileset.getBookName(), fileset.getChapterStart(), fileset.getPath()));
+                    filesets.data.forEach(fileset -> System.out.printf("%s %d: (%d) %s\n", fileset.book_name, fileset.chapter_start, fileset.duration, fileset.path));
                 } else {
                     System.out.println(response.errorBody());
                 }

@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.fcbh.model.Bibles;
 import org.fcbh.model.Filesets;
 import retrofit2.Call;
@@ -15,9 +16,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class DBP4 {
-    static final String BASE_URL="https://api.v4.dbt.io";
+    static final String BASE_URL="https://api.dev.v4.dbt.io";
     final String apiKey;
     final DBP4Service service;
+    final boolean logging = false;
 
     public DBP4(String apiKey) {
         this.apiKey = apiKey;
@@ -42,7 +44,7 @@ public class DBP4 {
     }
 
     protected OkHttpClient getClient(String apiKey) {
-        OkHttpClient client = new OkHttpClient().newBuilder().addInterceptor(new Interceptor() {
+        OkHttpClient.Builder builder = new OkHttpClient().newBuilder().addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request originalRequest = chain.request();
@@ -54,9 +56,15 @@ public class DBP4 {
                 Request newRequest = builder.build();
                 return chain.proceed(newRequest);
             }
-        }).build();
+        });
 
-        return client;
+        if (logging) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(interceptor);
+        }
+
+        return builder.build();
     }
 
     public void getBibles(@NotNull HashMap<String, String> options, Callback<Bibles> callback) {
@@ -69,5 +77,6 @@ public class DBP4 {
         if (bookId != null) { options.put("book_id", bookId); }
         if (chapterId != null) { options.put("chapter_id", chapterId); }
         Call<Filesets> call = service.getFilesets(filesetId, type, options);
+        call.enqueue(callback);
     }
 }
